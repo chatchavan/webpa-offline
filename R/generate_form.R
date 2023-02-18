@@ -4,7 +4,8 @@ library(openxlsx)
 
 path_template   <- "input/template.xlsx"
 path_group_list <- "input/students_groups.xlsx"
-path_output     <- "output/template_for_students"
+path_output_group <- "output/form_by_group"
+path_output_id    <- "output/form_by_student_id"
 
 
 # cell styles
@@ -101,10 +102,11 @@ groups_data <-
     `Comments` = NA) %>% 
   select(              # order columns must match the template
     `My name (x)`,
-    `Person`,
-    `Rating`,
-    `Comments`,
-    `Team`)
+    Person,
+    Rating,
+    Comments,
+    Team,
+    ID)
 
 data_list <- split(groups_data, f = groups_data$Team) 
 
@@ -115,9 +117,14 @@ for(individual_df in data_list) {
   
   wb_temp <- copyWorkbook(template_wb)
   
+  form_df <- 
+    individual_df %>% 
+    select(-ID) %>% 
+    as.data.frame()
+  
   writeDataTable(wb_temp, sheet = 1,
     startRow = row_header,
-    as.data.frame(individual_df),
+    form_df,
     colNames = TRUE,
     tableName = "webpa",
     withFilter = FALSE)
@@ -164,10 +171,14 @@ for(individual_df in data_list) {
                    lockSelectingLockedCells = FALSE,
                    lockSorting = TRUE)
   
-  # write output file  
+  # write output file by group
   team_number <- individual_df$Team[1]
-  file_name <- file.path(path_output, 
+  path_group <- file.path(path_output_group, 
                          sprintf("Peer assessment Team %02d.xlsx", team_number))
-  saveWorkbook(wb_temp, file_name, overwrite = TRUE)
+  saveWorkbook(wb_temp, path_group, overwrite = TRUE)
+  
+  # write output file by student ID
+  paths_id <- file.path(path_output_id, sprintf("%s.xlsx", individual_df$ID))
+  file.copy(path_group, paths_id, overwrite = TRUE)
 
 } # end for

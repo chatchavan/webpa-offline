@@ -2,5 +2,3 @@
 *
 # Except this file
 !.gitignore
-!form_by_group
-!form_by_student_id

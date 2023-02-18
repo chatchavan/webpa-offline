@@ -17,9 +17,10 @@ We developed an offline version to mitigate cybersecurity and GDPR concerns.
 1. Create an excel file with columns:
   - *Person*: full name of the student (example of entry: "John Doe");
   - *Team*: team number 1..N (examples of entry: 1, 15, 10)
+  - *ID*: student ID
 2. Save the created file to  `input/students_groups.xlsx`.
 3. Open and run `R/generate_form.R`
-4. The generated files will be saved to `output/template_for_students`.
+4. The generated files will be saved to `output/form_by_group` (one file per group) and `output/form_by_student_id` (one file per student id).
 
 ### 2. Calculate the adjustment factor based on the ratings
 
