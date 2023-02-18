@@ -122,13 +122,22 @@ for(individual_df in data_list) {
     tableName = "webpa",
     withFilter = FALSE)
   
+  # calculate rows/columns
   row_data_first <- row_header + 1
   rows_data      <- seq(row_data_first, length.out = nrow(individual_df))
   row_data_last  <- max(rows_data)
   rows_formula   <- seq(row_data_last + 2, length.out = nrow(formula_df))
+  
   col_formula    <- 1
   
-  writeData(wb_temp, 1, 
+  # create regions
+  createNamedRegion(wb_temp, sheet = 1,
+                    cols = 1:ncol(individual_df),
+                    rows = c(row_header, rows_data),
+                    name = "webparegion")
+
+  # write check formula
+  writeData(wb_temp, sheet = 1, 
             startCol = col_formula, 
             startRow = min(rows_formula), 
             colNames = FALSE,
