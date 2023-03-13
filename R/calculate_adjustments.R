@@ -5,6 +5,7 @@ library(fs)
 path_input_groups <- "input/students_groups.xlsx"
 path_output_webpa <- "output/webpa_score.csv"
 path_output_comments <- "output/webpa_comments.csv"
+min_webpa_score_sd_to_adjust <- 0.2
 paths_submitted <- 
   "input/submitted_ratings_datavis" %>% 
   list.files(pattern = '*.xlsx', 
@@ -32,7 +33,8 @@ extract_rating <- function(path_rating){
       `comment` = "Comments",
       `group` = "Team") %>% 
     mutate(x = str_to_lower(x)) %>% 
-    mutate(comment = as.character(comment))
+    mutate(comment = as.character(comment)) %>% 
+    mutate(comment = replace_na(comment, "")) 
   
   rating_long_df <- 
     a_rating_df %>% 
@@ -109,9 +111,12 @@ webpa_df <-
   # handle the case when nobody from the group submitted
   mutate(webpa_score = if_else(is.nan(webpa_score), 1, webpa_score)) %>% 
   
+  # add student ID of ratee
+  left_join(students_group_df, by = c("group_number" = "Team", "ratee" = "Person")) %>% 
+  rename(ratee_student_id = ID) %>% 
+  
   # keep only relevant columns
-  select(group_number, ratee, webpa_score)
-
+  select(group_number, ratee_student_id, ratee, webpa_score)
 
 
 # ============= Verification  ============= 
@@ -127,9 +132,23 @@ webpa_check_df <-
 
 stopifnot(all(webpa_check_df$is_equal))
 
+# ============= Filtering based on SD  ============= 
+
+webpa_sd_df <- 
+  
+  # calculate SD for WebPA score
+  webpa_df %>% 
+  group_by(group_number) %>% 
+  summarize(webpa_score_sd = sd(webpa_score)) %>% 
+  inner_join(webpa_df, by = "group_number", multiple = "all") %>% 
+  
+  # adjust only if WebPA score exceeds the SD threshold
+  mutate(webpa_score_exceed_threshold = if_else(webpa_score_sd > min_webpa_score_sd_to_adjust, webpa_score, 1))
+  
+
 
 # ============= Write output  =============
-webpa_df %>% 
+webpa_sd_df %>% 
   write_csv(path_output_webpa) 
 
 rating_joined_df %>% 
