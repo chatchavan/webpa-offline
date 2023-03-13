@@ -1,10 +1,12 @@
 library(tidyverse)
 library(openxlsx)
+library(fs)
 
 path_input_groups <- "input/students_groups.xlsx"
-path_output <- "output/webpa_score.csv"
+path_output_webpa <- "output/webpa_score.csv"
+path_output_comments <- "output/webpa_comments.csv"
 paths_submitted <- 
-  "input/submitted_ratings" %>% 
+  "input/submitted_ratings_datavis" %>% 
   list.files(pattern = '*.xlsx', 
              full.names = TRUE, 
              recursive = TRUE)
@@ -19,19 +21,24 @@ students_group_df <- read.xlsx(path_input_groups, sheet = 1)
 extract_rating <- function(path_rating){
   message("Processing:", path_rating)
   
+  file_name <- path_ext_remove(path_file(path_rating))
+  
   a_rating_df <- 
-    read.xlsx(path_rating, sheet = 1, namedRegion = "webparegion") %>% 
+    read.xlsx(path_rating, sheet = 1, namedRegion = "webparegion", na.strings = "") %>% 
     select(
       `x` = "My.name.(x)",
       `name` = "Person",
       `rating` = "Rating",
       `comment` = "Comments",
-      `group` = "Team")
+      `group` = "Team") %>% 
+    mutate(x = str_to_lower(x)) %>% 
+    mutate(comment = as.character(comment))
   
   rating_long_df <- 
     a_rating_df %>% 
     mutate(rater = a_rating_df$name[which(a_rating_df$x == "x")]) %>% 
-    select(ratee = name, rater, group_number = group, rating)
+    select(ratee = name, rater, group_number = group, rating, comment) %>% 
+    mutate(file_name = file_name)
   
   rating_long_df
 }
@@ -65,9 +72,8 @@ fudge_df <-
   select(group_number, fudge_factor)
 
 
-# calculate adjustments
-webpa_df <- 
-  
+
+rating_joined_df <-   
   # generate list of all possible raters, cross with ratees
   students_group_df %>%
   select(rater = Person, group_number = Team) %>% 
@@ -77,7 +83,13 @@ webpa_df <-
   
   # enter the submitted ratings
   left_join(rating_input_df, 
-            by = c("group_number", "rater", "ratee")) %>% 
+            by = c("group_number", "rater", "ratee")) 
+
+  
+# calculate adjustments
+webpa_df <- 
+  
+  rating_joined_df %>% 
   
   # normalize by total given ratings from each rater
   group_by(group_number, rater) %>%
@@ -118,4 +130,7 @@ stopifnot(all(webpa_check_df$is_equal))
 
 # ============= Write output  =============
 webpa_df %>% 
-  write_csv(path_output) 
+  write_csv(path_output_webpa) 
+
+rating_joined_df %>% 
+  write_csv(path_output_comments) 
