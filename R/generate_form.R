@@ -115,7 +115,7 @@ data_list <- split(groups_data, f = groups_data$Team)
 
 for(individual_df in data_list) {
   
-  wb_temp <- copyWorkbook(template_wb)
+  wb_temp <- loadWorkbook(path_template) # copyWorkbook(template_wb) # BUG: copyWorkbook() doesn't really copy the workbook; some (but not all) edits below are applied to template_wb
   
   form_df <- 
     individual_df %>% 
