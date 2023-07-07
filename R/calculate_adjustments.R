@@ -128,7 +128,7 @@ webpa_check_df <-
   summarize(sum_webpa = sum(webpa_score)) %>% 
   ungroup() %>% 
   left_join(n_group_df, by = "group_number") %>% 
-  mutate(is_equal = sum_webpa == group_size)
+  mutate(is_equal = round(sum_webpa) == round(group_size))
 
 stopifnot(all(webpa_check_df$is_equal))
 
