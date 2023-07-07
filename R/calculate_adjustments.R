@@ -143,7 +143,7 @@ webpa_sd_df <-
   inner_join(webpa_df, by = "group_number", multiple = "all") %>% 
   
   # adjust only if WebPA score exceeds the SD threshold
-  mutate(webpa_score_exceed_threshold = if_else(webpa_score_sd > min_webpa_score_sd_to_adjust, webpa_score, 1))
+  mutate(webpa_score_filtered_by_sd_threshold = if_else(webpa_score_sd > min_webpa_score_sd_to_adjust, webpa_score, 1))
   
 
 
