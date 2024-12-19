@@ -34,6 +34,7 @@ extract_rating <- function(path_rating){
       `group` = "Team") %>% 
     mutate(x = str_to_lower(x)) %>% 
     mutate(comment = as.character(comment)) %>% 
+    mutate(rating = as.integer(rating)) %>% 
     mutate(comment = replace_na(comment, "")) 
   
   rating_long_df <- 
