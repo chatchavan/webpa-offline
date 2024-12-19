@@ -174,7 +174,7 @@ for(individual_df in data_list) {
   # write output file by group
   team_number <- individual_df$Team[1]
   path_group <- file.path(path_output_group, 
-                         sprintf("Peer assessment Team %02d.xlsx", team_number))
+                         sprintf("Peer assessment Team %s.xlsx", team_number))
   saveWorkbook(wb_temp, path_group, overwrite = TRUE)
   
   # write output file by student ID
