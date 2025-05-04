@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  <style type="text/css">
+    #jsonOutput {
+      width: 300px;
+      height: 200px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  Team: <span id="teamId"></span>
+  <table id="studentTable">
+  	<thead>
+      <tr>
+        <th>Name</th>
+        <th>Rating</th>
+        <th>Comment</th>
+      </tr>
+    </thead>
+  </table>
+
+  <div>
+    <label for="me">Your name:</label>
+    <select id="me" name="me"></select>
+  </div>
+
+  <div id="jsonDisplay">
+    <textarea id="jsonOutput" readonly></textarea>
+    <button id="downloadButton">Download</button>
+  </div>
+</body>
+
+
+<script>
+let students = ["John Doe", "Jane Smith", "Sam Johnson", "Michael Brown"];
+let teamId = 1;
+let tableBody = document.querySelector("#studentTable");
+let meSelect = document.querySelector("#me");
+let data = {}; // Object to hold rating data
+data['team'] = teamId;
+data['rater'] = ''; 
+data['ratings'] = {};
+
+document.getElementById("teamId").innerText = teamId;
+
+students.forEach((name, index) => {
+  let row = document.createElement("tr");
+  let nameCell = document.createElement("td");
+  let commentCell = document.createElement("td");
+  let ratingCell = document.createElement("td");
+
+  nameCell.textContent = name;
+  data.ratings[name] = {}; // Create a new object for the student's data
+
+  let ratingSelect = document.createElement("select");
+  ratingSelect.addEventListener('change', (event) => {
+    data.ratings[name].rating = event.target.value; // Update rating in data object
+    updateUI(); // Call function to check if all fields are filled
+  });
+  // Adding an empty option at the beginning of each select element
+  let blankOption = document.createElement("option");
+  blankOption.value = '';
+  blankOption.textContent = '--Select--';
+  ratingSelect.appendChild(blankOption);
+  for (let i = 1; i <= 5; i++) {
+    let option = document.createElement("option");
+    option.value = i;
+    option.textContent = i;
+    ratingSelect.appendChild(option);
+  }
+  ratingCell.appendChild(ratingSelect);
+
+  let commentInput = document.createElement("textarea");
+  commentInput.addEventListener('input', (event) => {
+    data.ratings[name].comment = event.target.value; // Update comment in data object
+    updateUI();
+  });
+  commentCell.appendChild(commentInput);
+
+  row.appendChild(nameCell);
+  row.appendChild(ratingCell);
+  row.appendChild(commentCell);
+
+  tableBody.appendChild(row);
+});
+
+students.forEach((name, index) => {
+  let option = document.createElement("option");
+  option.value = name;
+  option.textContent = name;
+  meSelect.appendChild(option);
+});
+
+
+// Adding an empty option at the beginning of meSelect element
+let blankOptionMe = document.createElement("option");
+blankOptionMe.value = '';
+blankOptionMe.textContent = '--Select--';
+meSelect.insertBefore(blankOptionMe, meSelect.firstChild);
+
+meSelect.addEventListener('change', (event) => {
+  data['rater'] = event.target.value; // Update user property in data object
+  updateUI();
+});
+
+
+// Function to check if all fields are filled correctly
+function updateUI() {
+  
+  // check fields
+  let isFilled = true;
+  for (let student in data.ratings) {
+    if (!data.ratings[student].rating) {
+      isFilled = false;
+      break;
+    }
+  }
+  if (isFilled && data['rater']) {
+    document.getElementById('jsonDisplay').hidden = false;
+  } else {
+    document.getElementById('jsonDisplay').hidden = true;
+  }
+
+  // update JSON output area
+  let jsonData = JSON.stringify(data, null, 2); // Convert data object to JSON string
+  document.querySelector("#jsonOutput").value = jsonData; // Update textarea value
+}
+
+
+function downloadTextAreaContent() {
+    // Get the text area content
+    var text = document.getElementById('jsonOutput').value;
+
+    // Create a temporary anchor element
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', 'rating - ' + data['rater'] + '.json');
+
+    // Add the element to the DOM
+    document.body.appendChild(element);
+
+    // Trigger a click on the anchor element
+    element.click();
+
+    // Remove the element from the DOM
+    document.body.removeChild(element);
+}
+
+// Trigger the download when the button is clicked
+document.getElementById('downloadButton').addEventListener('click', downloadTextAreaContent);
+
+
+// initialize the visibility
+updateUI()
+
+</script>
+
+</html>
