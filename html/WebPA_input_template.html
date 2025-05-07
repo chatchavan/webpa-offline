@@ -31,8 +31,30 @@
       max-width: 30em;
     }
 
-    table td {
+
+    table#studentTable td {
       vertical-align: middle;
+    }
+
+    table.ratingExampleTable {
+      font-size: 80%;
+    }
+
+    table.ratingExampleTable thead tr th {
+      text-align: left;
+      padding: 0.5em;
+    }
+    table.ratingExampleTable td {
+      padding: 5px;
+    }
+
+    table.ratingExampleTable tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    table.ratingExampleTable tr td p {
+      margin-block-start: 0;
+      margin-block-end: 0;
     }
 
     #jsonOutput {
@@ -41,14 +63,152 @@
       display: block;
     }
 
+    #expandableContent {
+      font-size: 80%;
+      border-left-color: #0d6efd;
+      padding: .4em .7em;
+      border-left: 5px solid;
+      border-right: 1px solid #dededf;
+      border-top: 1px solid #dededf;
+      border-bottom: 1px solid #dededf;
+      margin-top: 1.25rem;
+      margin-bottom: 1.25rem;
+      border-radius: .375rem;
+      overflow-wrap: break-word;
+    }
+
+
+
   </style>
 </head>
 <body>
   <div id="main">
-    
     <h2>
-      Team: <span id="teamId"></span>
+      Rate contributions of members of your team
     </h2>
+
+<!-- Explanation -------------------------------------------- -->
+
+    <div id="expandableContent">
+      <div id="initialText">
+        Your ratings will be used to calculate the grade for individual team members.  <a href="#" id="readMoreLink">More details…</a> 
+      </div>
+      
+      <div id="expandedText" style="display: none;">
+        Your ratings will be used to calculate the grade for individual team members. 
+        <br/>
+        Your team will receive one <i>team grade</i>. Each member's grade will be <i>team grade</i>  × <i>contribution factor</i>.
+        The <i>contribution factor</i> is calculated by aggregating the responses in the form below.
+        For example, a team of four members handed in the following ratings:
+
+        <table class="ratingExampleTable">
+          <thead>
+          <tr>
+          <th></th>
+          <th> Rating by<br>Member1 </th>
+          <th> Rating by<br>Member2 </th>
+          <th> Rating by<br>Member3 </th>
+          <th> (Member4 did not <br>hand in ratings) </th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr>
+          <td style="text-align:left;"><p>Rating for Member1</p></td>
+          <td style="text-align:center;">5</td>
+          <td style="text-align:center;">4</td>
+          <td style="text-align:center;">5</td>
+          <td style="text-align:center;"></td>
+          </tr>
+
+          <tr>
+          <td style="text-align:left;"><p>Rating for Member2</p></td>
+          <td style="text-align:center;">3</td>
+          <td style="text-align:center;">4</td>
+          <td style="text-align:center;">4</td>
+          <td style="text-align:center;"></td>
+          </tr>
+
+          <tr>
+          <td style="text-align:left;"><p>Rating for Member3</p></td>
+          <td style="text-align:center;">1</td>
+          <td style="text-align:center;">2</td>
+          <td style="text-align:center;">3</td>
+          <td style="text-align:center;"></td>
+          </tr>
+
+          <tr>
+          <td style="text-align:left;"><p>Rating for Member4</p></td>
+          <td style="text-align:center;">4</td>
+          <td style="text-align:center;">3</td>
+          <td style="text-align:center;">3</td>
+          <td style="text-align:center;"></td>
+          </tr>
+
+          </tbody>
+          </table>
+
+        <p>
+          Suppose this team received a <i>team grade</i> of 5.25, each member will receive the grade as follows.
+        </p>
+
+        <table class="ratingExampleTable">
+        <thead>
+        <tr>
+        <th></th>
+        <th>Contribution factor</th>
+        <th>Grade</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+        <td>Member1</td>
+        <td style="text-align:center;">1.30</td>
+        <td style="text-align:center;">6.00</td>
+        </tr>
+
+        <tr>
+        <td>Member2</td>
+        <td style="text-align:center;">1.07</td>
+        <td style="text-align:center;">5.75</td>
+        </tr>
+
+        <tr>
+        <td>Member3</td>
+        <td style="text-align:center;">0.57</td>
+        <td style="text-align:center;">3.00</td>
+        </tr>
+
+        <tr>
+        <td>Member4</td>
+        <td style="text-align:center;">0.98</td>
+        <td style="text-align:center;">5.25</td>
+        </tr>
+
+        </tbody>
+        </table>
+        
+        Some observations:
+        <ul>
+          <li>Member1 was rated high consistently by everyone, and these ratings are higher than other members of the team. Therefore, they received a grade higher than the team grade.</li>
+          <li>Member3 received relatively low ratings, so their grade is lower than the rest of the team. </li>
+          <li>Although Member4 did not hand in the ratings, they were rated positively by other members, so they still receive a decent grade</li>
+        </ul>
+
+        For more details of the algorithm, see the <a href="https://webpaproject.lboro.ac.uk/WorkedExample">original WebPA page</a>.
+
+        <br>
+        <a href="#" id="collapseLink">(hide details)</a></div>
+        
+    </div>
+    
+
+<!-- RATING -------------------------------------------- -->
+
+    <h3>
+      Team: <span id="teamId"></span>
+    </h3>
     
     <div>
       <strong>Step 1 of 3:</strong> Rate the contribution of all members. 
@@ -234,6 +394,24 @@ document.getElementById('downloadButton').addEventListener('click', downloadText
 // initialize the visibility
 updateUI()
 
+</script>
+
+
+<script type="text/javascript">
+  // expand/collapse text
+  document.getElementById('readMoreLink').addEventListener('click', function(event) {
+    event.preventDefault(); // prevent default action of a link
+    document.getElementById('initialText').style.display = 'none';
+    this.style.display = 'none';
+    document.getElementById('expandedText').style.display = 'block';
+  });
+
+  document.getElementById('collapseLink').addEventListener('click', function(event) {
+      event.preventDefault(); // prevent default action of a link
+      document.getElementById('initialText').style.display = 'block';
+      document.getElementById('readMoreLink').style.display = 'inline';
+      this.parentNode.style.display = 'none';
+  });
 </script>
 
 </html>
