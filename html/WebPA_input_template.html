@@ -3,33 +3,90 @@
 <head>
     <meta charset="UTF-8">
   <style type="text/css">
+    body {
+      margin: 0;
+      padding: 0;
+      padding-bottom: 9em;
+      color: #494e52;
+      font-family: -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", Arial, sans-serif;
+      line-height:1.5
+    }
+
+    div#main {
+      max-width: 925px;
+      margin-left: auto;
+      margin-right: auto;
+      clear: both;
+      margin-top: 2em;
+      padding-left: 1em;
+      padding-right: 1em;
+    }
+
+    select.rating {
+      max-width: 10em;
+    }
+
+    textarea.comment {
+      width: 100%;
+      max-width: 30em;
+    }
+
+    table td {
+      vertical-align: middle;
+    }
+
     #jsonOutput {
       width: 300px;
       height: 200px;
       display: block;
     }
+
   </style>
 </head>
 <body>
-  Team: <span id="teamId"></span>
-  <table id="studentTable">
-  	<thead>
-      <tr>
-        <th>Name</th>
-        <th>Rating</th>
-        <th>Comment</th>
-      </tr>
-    </thead>
-  </table>
+  <div id="main">
+    
+    <h2>
+      Team: <span id="teamId"></span>
+    </h2>
+    
+    <div>
+      <strong>Step 1 of 3:</strong> Rate the contribution of all members. 
+    </div>
 
-  <div>
-    <label for="me">Your name:</label>
-    <select id="me" name="me"></select>
-  </div>
+    <table id="studentTable">
+    	<thead>
+        <tr>
+          <th>Name</th>
+          <th>Rating</th>
+          <th>(optional) Comment on this member</th>
+        </tr>
+      </thead>
+    </table>
 
-  <div id="jsonDisplay">
-    <textarea id="jsonOutput" readonly></textarea>
-    <button id="downloadButton">Download</button>
+    <div>
+      <hr/>
+      <label for="me">Your name:</label>
+      <select id="me" name="me"></select>
+    </div>
+
+    <div>
+
+    </div>
+
+    <div id="jsonDisplay">
+      Preview of your rating data:
+      <textarea id="jsonOutput" readonly></textarea>
+      
+      <strong>Step 2 of 3:</strong>  Download your rating data.
+      <button id="downloadButton">Download</button>
+
+      <div>
+        <strong>Step 3 of 3:</strong> <span id="uploadInstruction">Upload this file to the URL as instructed.</span>
+      </div>
+    </div>
+
+    
   </div>
 </body>
 
@@ -37,6 +94,7 @@
 <script>
 let students = ["John Doe", "Jane Smith", "Sam Johnson", "Michael Brown"];
 let teamId = 1;
+let uploadInstruction = null;
 let tableBody = document.querySelector("#studentTable");
 let meSelect = document.querySelector("#me");
 let data = {}; // Object to hold rating data
@@ -45,6 +103,10 @@ data['rater'] = '';
 data['ratings'] = {};
 
 document.getElementById("teamId").innerText = teamId;
+
+if (uploadInstruction !== null) {
+  document.getElementById("uploadInstruction").innerText = uploadInstruction;
+}
 
 students.forEach((name, index) => {
   let row = document.createElement("tr");
@@ -56,6 +118,7 @@ students.forEach((name, index) => {
   data.ratings[name] = {}; // Create a new object for the student's data
 
   let ratingSelect = document.createElement("select");
+  ratingSelect.classList.add('rating');
   ratingSelect.addEventListener('change', (event) => {
     data.ratings[name].rating = event.target.value; // Update rating in data object
     updateUI(); // Call function to check if all fields are filled
@@ -65,15 +128,30 @@ students.forEach((name, index) => {
   blankOption.value = '';
   blankOption.textContent = '--Select--';
   ratingSelect.appendChild(blankOption);
-  for (let i = 1; i <= 5; i++) {
+  for (const i of [1, 2, 3, 4, 5, "N/A"]) {
+    var i_text = i + ": ";
+    if (i == "N/A") {
+      i_text = "(Not applicable, e.g., the member left the team)"
+    }
+    else if (i == 1) {
+      i_text += "Made only a small contribution or contributed in a poor standard" 
+    } else if (i == 3) {
+      i_text += "Made an average contribution" 
+    } else if (i == 5) {
+      i_text += "Contributed to the most challenging aspects in a high standard"
+    } else {
+      i_text += "..."
+    }
+
     let option = document.createElement("option");
     option.value = i;
-    option.textContent = i;
+    option.textContent = i_text;
     ratingSelect.appendChild(option);
   }
   ratingCell.appendChild(ratingSelect);
 
   let commentInput = document.createElement("textarea");
+  commentInput.classList.add('comment');
   commentInput.addEventListener('input', (event) => {
     data.ratings[name].comment = event.target.value; // Update comment in data object
     updateUI();
