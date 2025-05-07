@@ -12,9 +12,15 @@ generate_html <- function(team_df){
   students <- str_c(team_df$firstname, " ", team_df$lastname)
   
   # HTML
-  html_content <- html_template
-  html_content <- str_replace(html_content, coll('let teamId = 1;'), paste0('let teamId = ', teamId, ';'))
-  html_content <- str_replace(html_content, coll('let students = ["John Doe", "Jane Smith", "Sam Johnson", "Michael Brown"];'), paste0('let students = ', jsonlite::toJSON(students), ';'))
+  html_content <- 
+    html_template |> 
+    str_replace(coll('let teamId = 1;'), 
+                paste0('let teamId = ', teamId, ';')) |> 
+    str_replace(coll('let students = ["John Doe", "Jane Smith", "Sam Johnson", "Michael Brown"];'), 
+                paste0('let students = ', jsonlite::toJSON(students), ';')) |> 
+    str_replace(coll('let uploadInstruction = null;'), 
+                "let uploadInstruction = \"Upload the file to OLAT ▸ R1 by May 27\";")
+  
   writeLines(html_content, path(output_path, paste0("team_", teamId, ".html")))
 }
 
