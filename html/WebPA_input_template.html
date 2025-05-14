@@ -31,6 +31,12 @@
       max-width: 30em;
     }
 
+    textarea.overallComment {
+      width: 100%;
+      max-width: 30em;
+      height: 4em;
+    }
+
 
     table#studentTable td {
       vertical-align: middle;
@@ -211,7 +217,7 @@
     </h3>
     
     <div>
-      <strong>Step 1 of 3:</strong> Rate the contribution of all members. 
+      <strong>Step 1 of 3:</strong> Rate all members' contribution according to their effort and quality of work.</i>
     </div>
 
     <table id="studentTable">
@@ -231,17 +237,25 @@
     </div>
 
     <div>
+      <label for="overallComment">(optional) Overall comment about the team:</label><br/>
+      <textarea id="overallComment" name="overallComment" class="overallComment"></textarea>
+    </div>
+
+    <div>
 
     </div>
 
-    <div id="jsonDisplay">
+    <div id="jsonDisplay" style="margin-top: 10px">
+      <hr/>
       Preview of your rating data:
       <textarea id="jsonOutput" readonly></textarea>
       
-      <strong>Step 2 of 3:</strong>  Download your rating data.
-      <button id="downloadButton">Download</button>
+      <div style="margin-top: 10px">
+        <strong>Step 2 of 3:</strong>  Download your rating data.
+        <button id="downloadButton">Download</button>
+      </div>
 
-      <div>
+      <div style="margin-top: 10px">
         <strong>Step 3 of 3:</strong> <span id="uploadInstruction">Upload this file to the URL as instructed.</span>
       </div>
     </div>
@@ -288,17 +302,18 @@ students.forEach((name, index) => {
   blankOption.value = '';
   blankOption.textContent = '--Select--';
   ratingSelect.appendChild(blankOption);
-  for (const i of [1, 2, 3, 4, 5, "N/A"]) {
+  for (const i of [1, 2, 3, 4, 5]) {
     var i_text = i + ": ";
-    if (i == "N/A") {
-      i_text = "(Not applicable, e.g., the member left the team)"
-    }
-    else if (i == 1) {
-      i_text += "Made only a small contribution or contributed in a poor standard" 
+    if (i == 1) {
+      i_text += "quite poor" 
+    } else if (i == 2) {
+      i_text += "not as good as most of the team" 
     } else if (i == 3) {
-      i_text += "Made an average contribution" 
+      i_text += "about average for the team" 
+    } else if (i == 4) {
+      i_text += "better than most of the team"
     } else if (i == 5) {
-      i_text += "Contributed to the most challenging aspects in a high standard"
+      i_text += "really excellent"
     } else {
       i_text += "..."
     }
@@ -332,6 +347,13 @@ students.forEach((name, index) => {
   meSelect.appendChild(option);
 });
 
+
+
+let overallCommentTextarea = document.getElementById("overallComment");
+overallCommentTextarea.addEventListener('input', (event) => {
+    data.overallComment = event.target.value;
+    updateUI();
+  });
 
 // Adding an empty option at the beginning of meSelect element
 let blankOptionMe = document.createElement("option");
