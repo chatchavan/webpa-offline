@@ -168,7 +168,7 @@
           </table>
 
         <p>
-          Suppose this team received a <i>team grade</i> of 5.25, each member will receive the grade as follows.
+          Suppose this team received a <strong><i>team grade</i> of 5.25</strong>, each member will receive the grade as follows.
         </p>
 
         <table class="ratingExampleTable">
@@ -176,7 +176,7 @@
         <tr>
         <th></th>
         <th>Contribution factor</th>
-        <th>Grade</th>
+        <th>Member grade</th>
         </tr>
         </thead>
 
@@ -210,7 +210,7 @@
         
         Some observations:
         <ul>
-          <li>Member1 was rated high consistently by everyone, and these ratings are higher than other members of the team. Therefore, they received a grade higher than the team grade.</li>
+          <li>Member1 was rated high consistently by everyone, and these ratings are higher than other members of the team. Therefore, they received a grade higher than the team grade. Nevertheless, their grade could not be higher than the best possible grade.</li>
           <li>Member3 received relatively low ratings, so their grade is lower than the rest of the team. </li>
           <li>Although Member4 did not hand in the ratings, they were rated positively by other members, so they still receive a decent grade</li>
         </ul>
@@ -293,7 +293,7 @@ data['ratings'] = {};
 document.getElementById("teamId").innerText = teamId;
 
 if (uploadInstruction !== null) {
-  document.getElementById("uploadInstruction").innerText = uploadInstruction;
+  document.getElementById("uploadInstruction").innerHTML = uploadInstruction;
 }
 
 students.forEach((name, index) => {
