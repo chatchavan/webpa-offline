@@ -1,17 +1,25 @@
 library(jsonlite)
 
-directory <- "html/Test rating files/"
+json_root <- "html/Test rating files/"
 
-json_files <- list.files(directory, pattern = "\\.json$", full.names = TRUE)
+#-------------------------------------------------------------------------------
+result_df <- 
+  data.frame(team = character(), rater = character(), 
+             rating_for = character(), rating = numeric(), comment = character(), 
+             overall_comment = character())
 
-result_df <- data.frame(team = character(), rater = character(), rating_for = character(),
-                        rating = numeric(), comment = character())
-
+json_files <- list.files(json_root, pattern = "\\.json$", full.names = TRUE)
 for (file in json_files) {
   data <- fromJSON(file, flatten = TRUE)
   
   team <- data$team
   rater <- data$rater
+  
+  if ("overallComment" %in% names(data)) {
+    overall_comment <- data$overallComment
+  } else {
+    overall_comment <- NA
+  }
   
   for (name in names(data$ratings)) {
     rating <- data$ratings[[name]]$rating
@@ -21,10 +29,15 @@ for (file in json_files) {
       comment <- NA
     }
     
-    new_row <- data.frame(team = team, rater = rater, rating_for = name,
-                          rating = as.numeric(rating), comment = comment)
+    new_row <- 
+      tibble(team = team, rater = rater, 
+             rating_for = name, rating = as.numeric(rating), comment = comment,
+             overall_comment = overall_comment)
+      
     result_df <- rbind(result_df, new_row)
   }
 }
 
 result_df
+
+#-------------------------------------------------------------------------------
