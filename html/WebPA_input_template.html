@@ -88,6 +88,11 @@
       overflow-wrap: break-word;
     }
 
+    span#completenessWarning {
+      font-size: 80%;
+      display: block;
+    }
+
 
 
   </style>
@@ -102,7 +107,9 @@
 
     <div id="expandableContent">
       <div id="initialText">
-        Your ratings will be used to calculate the grade for individual team members.  <a href="#" id="readMoreLink">More details…</a> 
+        Your ratings will be used to calculate the grade for individual team members. 
+        In case of dispute, anonymized ratings from all team members will be shared; comments won't be shared.
+        <a href="#" id="readMoreLink">More details…</a> 
       </div>
       
       <div id="expandedText" style="display: none;">
@@ -209,8 +216,11 @@
 
         For more details of the algorithm, see the <a href="https://webpaproject.lboro.ac.uk/WorkedExample">original WebPA page</a>.
 
-        <br>
-        <a href="#" id="collapseLink">(hide details)</a></div>
+        <p>
+          In case of dispute, all ratings will be dissociated from each rater's name, and will be shared with all team members together with the details of the calculation. Comments will not be shared.
+        </p>
+
+        <a href="#" id="collapseLink">Hide details</a></div>
         
     </div>
     
@@ -222,7 +232,7 @@
     </h3>
     
     <div>
-      <strong>Step 1 of 3:</strong> Rate all members' contribution according to their effort and quality of work.</i>
+      <strong>Step 1 of 4:</strong> Rate all members' contribution according to their effort and quality of work.
     </div>
 
     <table id="studentTable">
@@ -230,19 +240,19 @@
         <tr>
           <th>Name</th>
           <th>Rating</th>
-          <th>(optional) Comment on this member</th>
+          <th>(Optional) comment on this member</th>
         </tr>
       </thead>
     </table>
 
     <div>
       <hr/>
-      <label for="me">Your name:</label>
+      <label for="me"><strong>Step 2 of 4:</strong> Your name:</label>
       <select id="me" name="me"></select>
     </div>
 
     <div>
-      <label for="overallComment">(optional) Overall comment about the team:</label><br/>
+      <label for="overallComment">(Optional) overall comment about the team:</label><br/>
       <textarea id="overallComment" name="overallComment" class="overallComment"></textarea>
     </div>
 
@@ -256,12 +266,13 @@
       <textarea id="jsonOutput" readonly></textarea>
       
       <div style="margin-top: 10px">
-        <strong>Step 2 of 3:</strong>  Download your rating data as a JSON file.
-        <button id="downloadButton">Download</button>
+        <strong>Step 3 of 4:</strong> Download your rating data as a JSON file.
+        <button id="downloadButton" disabled>Download</button>
+        <span id="completenessWarning">After you rate everyone and select your name, the download button will be enabled.</span>
       </div>
 
       <div style="margin-top: 10px">
-        <strong>Step 3 of 3:</strong> <span id="uploadInstruction">Upload this JSON file to the URL as instructed.</span>
+        <strong>Step 4 of 4:</strong> <span id="uploadInstruction">Upload this JSON file to the URL as instructed.</span>
       </div>
     </div>
 
@@ -381,9 +392,11 @@ function updateUI() {
     }
   }
   if (isFilled && data['rater']) {
-    document.getElementById('jsonDisplay').hidden = false;
+    document.getElementById('downloadButton').disabled = false;
+    document.getElementById('completenessWarning').hidden = true;
   } else {
-    document.getElementById('jsonDisplay').hidden = true;
+    document.getElementById('downloadButton').disabled = true;
+    document.getElementById('completenessWarning').hidden = false;
   }
 
   // update JSON output area
