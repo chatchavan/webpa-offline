@@ -1,5 +1,7 @@
-team_id,student_id,firstname,lastname,email
-1,11-111-111,Max,Mustermann,max.mustermann@email.email
-1,11-222-222,Jane,Doe,jane.doe@email.email
-2,22-333-333,Test,Person,test.person@email.email
-2,22-444-444,John,Doe,john.doe@email.email
+team,student_id,firstname,lastname,email
+1,11-111-111,John,Doe,john.doe@email.email
+1,11-222-222,Jane,Smith,jane.smith@email.email
+1,22-333-333,Sam,Johnson,sam.johnson@email.email
+1,22-444-444,Michael,Brown,michael.brown@email.email
+2,xx-yyy-zzz,Max,Mustermann,max.mustermann@email.email
+2,zz-yyy-xxx,Biggs,Wondering,biggs.wondering@email.email

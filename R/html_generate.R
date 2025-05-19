@@ -9,7 +9,7 @@ upload_instruction <- "Upload this JSON file to OLAT ▸ R1 by May 27"
 
 generate_html <- function(team_df){
 
-  teamId <- as.character(team_df$team_id[1])
+  teamId <- as.character(team_df$team[1])
   students <- str_c(team_df$firstname, " ", team_df$lastname)
   
   # HTML
@@ -27,7 +27,7 @@ generate_html <- function(team_df){
 
 # process each team
 teams_data %>%
-  group_by(team_id) %>%
+  group_by(team) %>%
   group_split() %>%
   walk(~generate_html(.x))
 
