@@ -5,6 +5,7 @@ library(fs)
 teams_data <- read_csv("html/student_teams.csv", col_types = "cccc")
 html_template <- readLines("html/WebPA_input_template.html")
 output_path <- "html/forms_for_students"
+upload_instruction <- "Upload this JSON file to OLAT ▸ R1 by May 27"
 
 generate_html <- function(team_df){
 
@@ -19,7 +20,7 @@ generate_html <- function(team_df){
     str_replace(coll('let students = ["John Doe", "Jane Smith", "Sam Johnson", "Michael Brown"];'), 
                 paste0('let students = ', jsonlite::toJSON(students), ';')) |> 
     str_replace(coll('let uploadInstruction = null;'), 
-                "let uploadInstruction = \"Upload the file to OLAT ▸ R1 by May 27\";")
+                paste0("let uploadInstruction = \"", upload_instruction, "\";"))
   
   writeLines(html_content, path(output_path, paste0("team_", teamId, ".html")))
 }

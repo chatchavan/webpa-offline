@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
+  <script type="text/javascript">
+    let students = ["John Doe", "Jane Smith", "Sam Johnson", "Michael Brown"];
+    let teamId = 1;
+    let uploadInstruction = null;
+  </script>
   <style type="text/css">
     body {
       margin: 0;
@@ -251,12 +256,12 @@
       <textarea id="jsonOutput" readonly></textarea>
       
       <div style="margin-top: 10px">
-        <strong>Step 2 of 3:</strong>  Download your rating data.
+        <strong>Step 2 of 3:</strong>  Download your rating data as a JSON file.
         <button id="downloadButton">Download</button>
       </div>
 
       <div style="margin-top: 10px">
-        <strong>Step 3 of 3:</strong> <span id="uploadInstruction">Upload this file to the URL as instructed.</span>
+        <strong>Step 3 of 3:</strong> <span id="uploadInstruction">Upload this JSON file to the URL as instructed.</span>
       </div>
     </div>
 
@@ -266,9 +271,6 @@
 
 
 <script>
-let students = ["John Doe", "Jane Smith", "Sam Johnson", "Michael Brown"];
-let teamId = 1;
-let uploadInstruction = null;
 let tableBody = document.querySelector("#studentTable");
 let meSelect = document.querySelector("#me");
 let data = {}; // Object to hold rating data
