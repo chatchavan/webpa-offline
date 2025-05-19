@@ -91,6 +91,7 @@
     span#completenessWarning {
       font-size: 80%;
       display: block;
+      color: lightgrey;
     }
 
 
@@ -315,7 +316,7 @@ students.forEach((name, index) => {
   blankOption.value = '';
   blankOption.textContent = '--Select--';
   ratingSelect.appendChild(blankOption);
-  for (const i of [1, 2, 3, 4, 5]) {
+  for (const i of [5, 4, 3, 2, 1]) {
     var i_text = i + ": ";
     if (i == 1) {
       i_text += "quite poor" 
@@ -393,10 +394,10 @@ function updateUI() {
   }
   if (isFilled && data['rater']) {
     document.getElementById('downloadButton').disabled = false;
-    document.getElementById('completenessWarning').hidden = true;
+    document.getElementById('completenessWarning').style.display = 'none';
   } else {
     document.getElementById('downloadButton').disabled = true;
-    document.getElementById('completenessWarning').hidden = false;
+    document.getElementById('completenessWarning').style.display = 'block';
   }
 
   // update JSON output area
