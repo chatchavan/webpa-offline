@@ -5,7 +5,10 @@ library(fs)
 teams_data <- read_csv("html/student_teams.csv", col_types = "cccc")
 html_template <- readLines("html/WebPA_input_template.html")
 output_path <- "html/forms_for_students"
-upload_instruction <- "Upload this JSON file to OLAT ▸ R1 by May 27"
+upload_instruction <- "Upload this JSON file to OLAT ▸ <b>Hand-in</b> by May 29, before noon"
+
+#-------------------------------------------------------------------------------
+dir_create(output_path)
 
 generate_html <- function(team_df){
 
