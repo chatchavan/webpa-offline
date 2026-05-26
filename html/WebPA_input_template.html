@@ -374,6 +374,7 @@ let blankOptionMe = document.createElement("option");
 blankOptionMe.value = '';
 blankOptionMe.textContent = '--Select--';
 meSelect.insertBefore(blankOptionMe, meSelect.firstChild);
+meSelect.selectedIndex = 0; // set the default selection to the `--Select--` item (needed for Google Chrome)
 
 meSelect.addEventListener('change', (event) => {
   data['rater'] = event.target.value; // Update user property in data object
